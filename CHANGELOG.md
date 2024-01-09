@@ -2,6 +2,13 @@
 
 
 
+## v0.1.1 (2024-01-09)
+
+### Fix
+
+* fix: update pipelines / force build ([`a07ca2d`](https://github.com/eugene-prout/ttracker/commit/a07ca2dabd256a8599e5ed41f121e9d827eb78e9))
+
+
 ## v0.1.0 (2024-01-09)
 
 ### Ci
