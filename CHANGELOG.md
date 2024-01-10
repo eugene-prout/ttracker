@@ -2,6 +2,17 @@
 
 
 
+## v0.2.1 (2024-01-10)
+
+### Fix
+
+* fix: add rich to dependencies and fix bug in orm.py ([`1302c87`](https://github.com/eugene-prout/ttracker/commit/1302c87701468f3e97cc5bf32d07c415cf023995))
+
+### Unknown
+
+* Merge branch &#39;main&#39; of https://github.com/eugene-prout/ttracker ([`9ace49b`](https://github.com/eugene-prout/ttracker/commit/9ace49b81435ca93edcf4ec04a6f789d9beb6761))
+
+
 ## v0.2.0 (2024-01-09)
 
 ### Feature
