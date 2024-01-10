@@ -2,6 +2,17 @@
 
 
 
+## v0.2.0 (2024-01-09)
+
+### Feature
+
+* feat: add commands to: add, start, stop, rm, ls tasks ([`119063e`](https://github.com/eugene-prout/ttracker/commit/119063ee5c8f1bc0a48c1263bdff890c2be4f913))
+
+### Unknown
+
+* Merge branch &#39;main&#39; of https://github.com/eugene-prout/ttracker ([`af64166`](https://github.com/eugene-prout/ttracker/commit/af64166e9808109e4abd6a14afe68eba19c7d233))
+
+
 ## v0.1.1 (2024-01-09)
 
 ### Fix
