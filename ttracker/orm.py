@@ -2,7 +2,7 @@ import csv
 from datetime import datetime
 import os
 from pathlib import Path
-from git import Optional
+from typing import Optional
 from ttracker.models import Task
 
 
