@@ -1,5 +1,8 @@
-import dataclasses
+from dataclasses import dataclass, replace
 import datetime
+from functools import cmp_to_key
+from typing import Optional
+
 from ttracker.models import Task
 from ttracker.orm import CSVAdapter, Repository
 
@@ -27,11 +30,17 @@ def start_task(name: str):
         if task.active:
             raise ValueError("Task already started.")
 
-        new_task = dataclasses.replace(
-            task, start_active_timestamp=datetime.datetime.now()
-        )
+        new_task = replace(task, start_active_timestamp=datetime.datetime.now())
 
         r.save_task(new_task)
+
+
+def calculate_active_time(t: Task, datetime_provider=datetime.datetime):
+    if not t.start_active_timestamp:
+        return 0
+
+    difference = datetime_provider.now() - t.start_active_timestamp
+    return round(difference.total_seconds())
 
 
 def stop_task(name: str) -> tuple[str, str]:
@@ -43,19 +52,15 @@ def stop_task(name: str) -> tuple[str, str]:
         if not task.active:
             raise ValueError("Task not started.")
 
-        old_total_time = task.cumulative_time
-        increase = datetime.datetime.now() - task.start_active_timestamp  # type: ignore
-        new_total_time = old_total_time + round(increase.total_seconds())
-
-        new_task = dataclasses.replace(
+        increase = calculate_active_time(task)
+        new_total_time = task.cumulative_time + increase
+        new_task = replace(
             task, start_active_timestamp=None, cumulative_time=new_total_time
         )
 
         r.save_task(new_task)
 
-        return seconds_to_jira_time(increase.total_seconds()), seconds_to_jira_time(
-            new_total_time
-        )
+        return seconds_to_jira_time(increase), seconds_to_jira_time(new_total_time)
 
 
 def delete_task(name: str):
@@ -70,10 +75,58 @@ def delete_task(name: str):
     return seconds_to_jira_time(task.cumulative_time)
 
 
+@dataclass
+class DisplayTask:
+    name: str
+    active: bool
+    active_time: Optional[str]
+    total_time: str
+
+
+def task_comparator(task1, task2):
+    # Custom comparator function
+    if task1.active and task2.active:
+        # Both tasks are active, compare by start_active_timestamp and last_modified
+        if task1.start_active_timestamp > task2.start_active_timestamp:
+            return -1
+        elif task1.start_active_timestamp < task2.start_active_timestamp:
+            return 1
+        else:
+            if task1.last_modified > task2.last_modified:
+                return -1
+            else:
+                return 1
+    elif task1.active:
+        # Only task1 is active, it comes first
+        return -1
+    elif task2.active:
+        # Only task2 is active, it comes first
+        return 1
+    else:
+        # Both tasks are inactive, compare by last_modified
+        if task1.last_modified > task2.last_modified:
+            return -1
+        else:
+            return 1
+
+
+def convert_to_display_task(t: Task):
+    active_time = None
+    if t.active:
+        active_time = seconds_to_jira_time(calculate_active_time(t))
+
+    return DisplayTask(
+        name=t.name,
+        active=t.active,
+        active_time=active_time,
+        total_time=seconds_to_jira_time(t.cumulative_time),
+    )
+
+
 def list_tasks():
     with Repository(CSVAdapter(".ttracker.csv")) as r:
-        all_tasks = r.all_tasks()
-        return all_tasks
+        all_tasks = sorted(r.all_tasks(), key=cmp_to_key(task_comparator))
+        return [convert_to_display_task(t) for t in all_tasks]
 
 
 def seconds_to_jira_time(seconds):

@@ -1,4 +1,5 @@
 import csv
+from dataclasses import replace
 from datetime import datetime
 import os
 from pathlib import Path
@@ -29,6 +30,7 @@ class CSVAdapter:
                         start_active_timestamp=datetime.fromisoformat(row[1])
                         if row[1]
                         else None,
+                        last_modified=datetime.fromisoformat(row[4]),
                     )
                     tasks.append(task)
         except FileNotFoundError:
@@ -62,9 +64,9 @@ class Repository:
     def save_task(self, task: Task) -> None:
         for i, t in enumerate(self.tasks):
             if t.name == task.name:
-                self.tasks[i] = task
+                self.tasks[i] = replace(task, last_modified=datetime.now())
                 return
-        self.tasks.append(task)
+        self.tasks.append(replace(task, last_modified=datetime.now()))
 
     def delete_task(self, task: Task):
         self.tasks = [t for t in self.tasks if t != task]

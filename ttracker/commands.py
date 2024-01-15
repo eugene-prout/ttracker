@@ -4,14 +4,13 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from ttracker.models import Task
 from ttracker.services import (
+    DisplayTask,
     create_task,
     delete_task,
     list_tasks,
     start_task,
     stop_task,
-    seconds_to_jira_time,
 )
 
 
@@ -47,22 +46,22 @@ def ls():
         Console().print(table)
 
 
-def make_table(tasks: list[Task]) -> Table:
+def make_table(tasks: list[DisplayTask]) -> Table:
     table = Table(box=box.SIMPLE, expand=True)
     table.add_column("Name")
     table.add_column("Active")
     table.add_column("Total time")
 
-    for t in sorted(tasks, key=lambda x: x.last_modified):
-        if t.active:
-            active_text = "Active"
+    for t in tasks:
+        if t.active_time:
+            active_text = t.active_time
         else:
             active_text = "-"
         table.add_row(
             Text(t.name, overflow="ellipsis", no_wrap=True),
             Text(active_text, overflow="ellipsis", no_wrap=True),
             Text(
-                seconds_to_jira_time(t.cumulative_time),
+                text=t.total_time,
                 overflow="ellipsis",
                 no_wrap=True,
             ),

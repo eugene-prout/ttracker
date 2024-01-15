@@ -21,6 +21,7 @@ class Task:
             self.start_active_timestamp,
             self.visible,
             self.cumulative_time,
+            self.last_modified,
         ]
 
     @staticmethod
@@ -30,4 +31,5 @@ class Task:
             "start_active_timestamp",
             "visible",
             "cumulative_time",
+            "last_modified",
         ]
