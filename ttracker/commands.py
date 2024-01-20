@@ -9,6 +9,8 @@ from ttracker.services import (
     create_task,
     delete_task,
     list_tasks,
+    pause_task,
+    resume_task,
     start_task,
     stop_task,
 )
@@ -36,6 +38,13 @@ def rm(name: str):
     total = delete_task(name)
     click.echo(f"{name} removed. Total time: {total}")
 
+def resume():
+    task = resume_task()
+    click.echo(f"{task.name} started.")
+
+def pause():
+    task = pause_task()
+    click.echo(f"{task.name} stopped.")
 
 def ls():
     all_tasks = list_tasks()

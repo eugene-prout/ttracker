@@ -7,4 +7,5 @@ def main():
     try:
         c()
     except Exception as e:
+        raise e
         click.secho(f"Error: {str(e)}", fg="red")

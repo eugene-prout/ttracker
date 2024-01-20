@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import click
 from typing import Callable
 
-from ttracker.commands import ls, new, rm, start, stop
+from ttracker.commands import ls, new, pause, resume, rm, start, stop
 
 
 @dataclass
@@ -31,6 +31,8 @@ def command_factory() -> click.Group:
             stop,
             [click.Argument(["name"])],
         ),
+        Command("resume", resume, []),
+        Command("pause", pause, []),
         Command("rm", rm, [click.Argument(["name"])]),
         Command("ls", ls, []),
     ]

@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from typing import Optional
 
@@ -14,6 +14,32 @@ class Task:
     @property
     def active(self) -> bool:
         return self.start_active_timestamp is not None
+
+    def start(self, started_at: datetime):
+        if self.start_active_timestamp:
+            raise ValueError("Trying to start already started task.")
+        
+        return replace(
+            self,
+            start_active_timestamp=started_at  
+        )
+
+    def stop_task(self, stopped_at: datetime):
+        if self.start_active_timestamp is None:
+            raise ValueError("Trying to stop task which is not active.")
+        if self.start_active_timestamp > stopped_at:
+            raise ValueError("Trying to stop task at a time before it started.")
+        
+        time_increase = round(
+            (stopped_at - self.start_active_timestamp).total_seconds()
+        )
+
+        new_total_time = self.cumulative_time + time_increase
+        return replace(
+            self, 
+            start_active_timestamp=None,
+            cumulative_time=new_total_time
+        ), time_increase
 
     def to_row(self):
         return [
@@ -33,3 +59,8 @@ class Task:
             "cumulative_time",
             "last_modified",
         ]
+
+def calculate_active_time(t: Task, now: datetime):
+    if not t.start_active_timestamp:
+        raise ValueError("Task not started.")
+    return round((now - t.start_active_timestamp).total_seconds())

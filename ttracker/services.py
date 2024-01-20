@@ -1,9 +1,9 @@
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 import datetime
 from functools import cmp_to_key
 from typing import Optional
 
-from ttracker.models import Task
+from ttracker.models import Task, calculate_active_time
 from ttracker.orm import CSVAdapter, Repository
 
 
@@ -30,17 +30,8 @@ def start_task(name: str):
         if task.active:
             raise ValueError("Task already started.")
 
-        new_task = replace(task, start_active_timestamp=datetime.datetime.now())
-
+        new_task = task.start(datetime.datetime.now())
         r.save_task(new_task)
-
-
-def calculate_active_time(t: Task, datetime_provider=datetime.datetime):
-    if not t.start_active_timestamp:
-        return 0
-
-    difference = datetime_provider.now() - t.start_active_timestamp
-    return round(difference.total_seconds())
 
 
 def stop_task(name: str) -> tuple[str, str]:
@@ -51,16 +42,12 @@ def stop_task(name: str) -> tuple[str, str]:
 
         if not task.active:
             raise ValueError("Task not started.")
-
-        increase = calculate_active_time(task)
-        new_total_time = task.cumulative_time + increase
-        new_task = replace(
-            task, start_active_timestamp=None, cumulative_time=new_total_time
-        )
-
+        
+        now = datetime.datetime.now()
+        new_task, increase = task.stop_task(now)
         r.save_task(new_task)
 
-        return seconds_to_jira_time(increase), seconds_to_jira_time(new_total_time)
+        return seconds_to_jira_time(increase), seconds_to_jira_time(new_task.cumulative_time)
 
 
 def delete_task(name: str):
@@ -73,6 +60,35 @@ def delete_task(name: str):
 
         r.delete_task(task)
     return seconds_to_jira_time(task.cumulative_time)
+
+def resume_task():
+    with Repository(CSVAdapter(".ttracker.csv")) as r:
+        active_tasks = [t for t in r.all_tasks() if t.active]
+        if len(active_tasks) > 0:
+            raise ValueError("A task has already been started. Unable to resume.")
+        
+        inactive_tasks = [t for t in r.all_tasks() if not t.active]
+        if len(inactive_tasks) == 0:
+            raise ValueError("No active task. Unable to resume a task.")
+        
+        most_recently_stopped_task = max(inactive_tasks, key=lambda t: t.last_modified)
+        new_task = most_recently_stopped_task.start(datetime.datetime.now())
+        r.save_task(new_task)
+
+        return convert_to_display_task(new_task)
+    
+def pause_task():
+    with Repository(CSVAdapter(".ttracker.csv")) as r:
+        active_tasks = [t for t in r.all_tasks() if t.active]
+        if len(active_tasks) == 0:
+            raise ValueError("No active task. Unable to pause.")
+        if len(active_tasks) > 1:
+            raise ValueError("More than one active task. Unable to pause.")
+        active_task = active_tasks[0]
+        new_task, _ = active_task.stop_task(datetime.datetime.now())
+        r.save_task(new_task)
+
+        return convert_to_display_task(new_task)
 
 
 @dataclass
@@ -113,7 +129,7 @@ def task_comparator(task1, task2):
 def convert_to_display_task(t: Task):
     active_time = None
     if t.active:
-        active_time = seconds_to_jira_time(calculate_active_time(t))
+        active_time = seconds_to_jira_time(calculate_active_time(t, datetime.datetime.now()))
 
     return DisplayTask(
         name=t.name,
