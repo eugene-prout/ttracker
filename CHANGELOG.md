@@ -2,6 +2,18 @@
 
 
 
+## v0.4.0 (2024-01-20)
+
+### Feature
+
+* feat: add pause and resume
+Move logic out of services and into domain model ([`681a768`](https://github.com/eugene-prout/ttracker/commit/681a76833b19858a47ce5b2bba78c9aacd0dec6e))
+
+### Unknown
+
+* Merge branch &#39;main&#39; of https://github.com/eugene-prout/ttracker ([`20a3ba2`](https://github.com/eugene-prout/ttracker/commit/20a3ba23bb728f2a6cda872fd9c24ebd1e4f5b61))
+
+
 ## v0.3.0 (2024-01-15)
 
 ### Feature
