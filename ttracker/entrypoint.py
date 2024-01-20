@@ -1,3 +1,4 @@
+import os
 import click
 from ttracker.cli_factory import command_factory
 
@@ -7,5 +8,7 @@ def main():
     try:
         c()
     except Exception as e:
-        raise e
-        click.secho(f"Error: {str(e)}", fg="red")
+        if os.getenv("TT_DEBUG", False):
+            raise e
+        else:
+            click.secho(f"Error: {str(e)}", fg="red")
