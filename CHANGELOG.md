@@ -2,6 +2,17 @@
 
 
 
+## v0.3.0 (2024-01-15)
+
+### Feature
+
+* feat: improve ls view ([`3ced2bd`](https://github.com/eugene-prout/ttracker/commit/3ced2bd0e8dd0371b810fe4018a4137381b0c969))
+
+### Unknown
+
+* Merge branch &#39;main&#39; of https://github.com/eugene-prout/ttracker ([`617ff0d`](https://github.com/eugene-prout/ttracker/commit/617ff0df8864a7c9c192c1c27f109a363d0dd957))
+
+
 ## v0.2.1 (2024-01-10)
 
 ### Fix
