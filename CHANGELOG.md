@@ -2,6 +2,17 @@
 
 
 
+## v0.4.2 (2024-01-30)
+
+### Fix
+
+* fix: display active time on pause command ([`064cbdd`](https://github.com/eugene-prout/ttracker/commit/064cbdd88299724aaf81d251bd2dc0a17be85f30))
+
+### Unknown
+
+* Merge branch &#39;main&#39; of https://github.com/eugene-prout/ttracker ([`03d52e6`](https://github.com/eugene-prout/ttracker/commit/03d52e6d609676c03de5477f339e795303256507))
+
+
 ## v0.4.1 (2024-01-20)
 
 ### Fix
