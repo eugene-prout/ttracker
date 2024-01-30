@@ -43,8 +43,8 @@ def resume():
     click.echo(f"{task.name} started.")
 
 def pause():
-    task = pause_task()
-    click.echo(f"{task.name} stopped.")
+    task, increase = pause_task()
+    click.echo(f"{task.name} stopped. Session: {increase}. Total: {task.total_time}")
 
 def ls():
     all_tasks = list_tasks()

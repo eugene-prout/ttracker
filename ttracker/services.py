@@ -85,10 +85,10 @@ def pause_task():
         if len(active_tasks) > 1:
             raise ValueError("More than one active task. Unable to pause.")
         active_task = active_tasks[0]
-        new_task, _ = active_task.stop_task(datetime.datetime.now())
+        new_task, time_increase = active_task.stop_task(datetime.datetime.now())
         r.save_task(new_task)
 
-        return convert_to_display_task(new_task)
+        return convert_to_display_task(new_task), seconds_to_jira_time(time_increase)
 
 
 @dataclass
