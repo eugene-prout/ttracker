@@ -2,6 +2,17 @@
 
 
 
+## v0.4.1 (2024-01-20)
+
+### Fix
+
+* fix: add env var to toggle exception tracebacks ([`2028053`](https://github.com/eugene-prout/ttracker/commit/20280539861b2292f0a3b1d0813ec651aa5198eb))
+
+### Unknown
+
+* Merge branch &#39;main&#39; of https://github.com/eugene-prout/ttracker ([`6f0d6e4`](https://github.com/eugene-prout/ttracker/commit/6f0d6e4b6153b43ee28d5f14234e1cca1af46d87))
+
+
 ## v0.4.0 (2024-01-20)
 
 ### Feature
